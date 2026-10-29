@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f7fb">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Medilogix TOF</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Medilogix home">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span><strong>medilogix</strong><small>INSTRUMENT SYSTEMS</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="live">Live monitor</button>
+        <button class="nav-item" data-view="recordings">Recordings <span class="nav-count" id="session-count">0</span></button>
+      </nav>
+      <div class="topbar-right"><span class="offline-mark"></span> Runs locally on this computer</div>
+    </header>
+
+    <main>
+      <section id="live-view" class="view">
+        <div class="page-heading">
+          <div><div class="eyebrow">DEVICE WORKSPACE</div><h1>Live monitor</h1><p>Connect your instrument to view and record incoming serial data.</p></div>
+          <div class="session-chip" id="session-chip"><span class="status-dot"></span><span id="session-state">Ready to connect</span></div>
+        </div>
+
+        <section class="connect-panel panel">
+          <div class="panel-heading"><div><h2>Instrument connection</h2><p>Available USB serial devices are detected when you connect.</p></div><span class="connect-availability"><span class="offline-mark"></span> Device selection</span></div>
+          <div class="connection-controls">
+            <label class="field baud-field"><span>Baud rate</span><select id="baud-select"><option>9600</option><option>19200</option><option>38400</option><option>57600</option><option selected>115200</option></select><small>Current monitor setting: 115200</small></label>
+            <div class="connection-actions"><button class="button button-primary connect-button" id="connect-button"><span class="connect-icon">↔</span> Connect &amp; record</button><button class="button button-demo" id="demo-button"><span class="demo-icon">▷</span> Try sample data</button></div>
+          </div>
+          <div class="connection-footer"><span class="lock-icon">▣</span> Data is saved on this computer as it arrives. No network connection is required.</div>
+        </section>
+
+        <section class="capture-grid">
+          <article class="panel monitor-panel">
+            <div class="panel-heading monitor-heading"><div><div class="heading-with-dot"><span class="status-dot" id="monitor-dot"></span><h2>Serial monitor</h2></div><p id="monitor-subtitle">Incoming messages will appear here when connected.</p></div><div class="monitor-actions"><button id="clear-monitor" class="button button-subtle" title="Clear the visible monitor">Clear view</button><button id="disconnect-button" class="button button-danger" disabled>Disconnect</button></div></div>
+            <div class="monitor-toolbar"><span>RECEIVED DATA</span><span id="received-count">0 messages</span></div>
+            <div class="serial-output" id="serial-output" role="log" aria-live="polite"><div class="empty-state"><span class="empty-glyph">⌁</span><strong>Waiting for a connection</strong><span>Choose the instrument port above to begin a recording session.</span></div></div>
+            <div class="monitor-foot"><span><i class="legend-dot"></i>Original instrument messages are retained</span><span id="active-session-id">No active session</span></div>
+          </article>
+          <aside class="side-column">
+            <article class="panel detail-panel"><div class="panel-heading"><div><h2>Session details</h2><p>Current recording</p></div><span class="live-pill" id="recording-pill">STANDBY</span></div><dl class="detail-list"><div><dt>Device</dt><dd id="detail-device">—</dd></div><div><dt>Baud rate</dt><dd id="detail-baud">—</dd></div><div><dt>Started</dt><dd id="detail-start">—</dd></div><div><dt>Messages saved</dt><dd id="detail-record-count">0</dd></div></dl><div class="storage-note"><span class="storage-icon">▤</span><div><strong>Saved continuously</strong><span>Each complete or partial line is retained with its arrival time.</span></div></div></article>
+            <article class="panel next-panel"><div class="next-icon">⌁</div><div class="eyebrow">RECORDING REVIEW</div><h3>Review a saved trend</h3><p>After recording, open the session in Recordings to inspect its original messages and provisional reference-style graph.</p><div class="graph-preview"><span>TOFR</span><span>TOFC</span><span>PTC</span><div class="preview-line"></div></div></article>
+          </aside>
+        </section>
+        <div class="notice" id="notice" role="status" hidden></div>
+      </section>
+
+      <section id="recordings-view" class="view" hidden>
+        <div class="page-heading"><div><div class="eyebrow">LOCAL DATA</div><h1>Recordings</h1><p>Review saved sessions, inspect their raw messages, and export captured data.</p></div><button class="button button-subtle" id="refresh-sessions">↻ &nbsp; Refresh list</button></div>
+        <section class="panel recordings-panel"><div class="panel-heading"><div><h2>Saved sessions</h2><p>Recordings are stored locally in the application data folder.</p></div><button class="button button-subtle" id="open-recordings-folder">Open recordings folder</button></div><div class="table-wrap"><table><thead><tr><th>SESSION</th><th>DEVICE</th><th>STARTED</th><th>MESSAGES</th><th>STATUS</th><th></th></tr></thead><tbody id="sessions-table"><tr><td colspan="6" class="table-empty">No recordings yet. Connect an instrument to create the first session.</td></tr></tbody></table></div></section>
+        <section class="panel review-panel" id="review-panel" hidden>
+          <div class="panel-heading review-heading"><div><div class="eyebrow">SESSION REVIEW</div><h2 id="review-title">Recording</h2><p id="review-meta"></p></div><button class="button button-subtle" id="close-review">Close review</button></div>
+          <div class="chart-caveat">Exploratory view: the device clock format and clinical band mapping are not confirmed. Sample replay is simulated and must not be used for clinical decisions.</div>
+          <div class="chart-toolbar"><div><strong>Historical data</strong><span id="chart-point-count">0 measurements</span></div><div class="chart-zoom"><button type="button" id="zoom-out" aria-label="Zoom out">−</button><button type="button" id="zoom-in" aria-label="Zoom in">+</button></div></div>
+          <div class="chart-frame"><div class="chart-y-labels"><span>TOFR &gt; 90%</span><span>TOFR &gt; 40%</span><span>TOFR &gt; 10%</span><span>TOFC &gt; 0</span><span>PTC &gt; 0</span><span>PTC = 0</span></div><svg id="trend-chart" viewBox="0 0 900 420" role="img" aria-label="Exploratory TOF and PTC trend chart"></svg><div class="chart-right-labels"><span>Recovered</span><span>Minimal</span><span>Shallow</span><span>Moderate</span><span>Deep</span><span>Profound</span></div></div>
+          <div class="chart-pan-row"><span id="chart-start-label">—</span><input id="chart-pan" type="range" min="0" max="100" value="100" aria-label="Navigate chart timeline"><span id="chart-end-label">—</span></div>
+          <div class="review-table-wrap"><table><thead><tr><th>#</th><th>RECEIVED</th><th>DEVICE TIME</th><th>TYPE</th><th>VALUE</th><th>RAW MESSAGE</th></tr></thead><tbody id="review-records"></tbody></table></div>
+        </section>
+        <p class="privacy-caption"><span class="lock-icon">▣</span> Recordings stay on this device unless you choose to export a CSV file.</p>
+      </section>
+    </main>
+    <footer><span>MEDILOGIX TOF <span class="footer-sep">·</span> DEVICE DATA CAPTURE</span><span>Offline ready <i class="offline-mark"></i></span></footer>
+  </div>
+  <dialog class="device-dialog" id="device-dialog"><div class="dialog-top"><span class="eyebrow">USB DEVICE SELECTION</span><button class="dialog-close" id="cancel-device-picker" aria-label="Cancel">×</button></div><h2>Select your instrument</h2><p class="dialog-description">Choose the USB serial device connected to your instrument.</p><div class="device-options" id="device-options"></div><div class="dialog-foot">You can reconnect the same device later from this screen.</div></dialog>
+  <script src="visualization.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
