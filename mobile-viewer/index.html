@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f7fb">
+  <meta name="description" content="View your MedilogiX patient recordings.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./medilogix-logo.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Recordings · MedilogiX</title>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#recordings" aria-label="MedilogiX recordings">
+      <img src="./medilogix-logo.png" alt="MedilogiX">
+    </a>
+    <div class="account-area" id="account-area" hidden>
+      <span class="account-email" id="account-email"></span>
+      <button class="button button-quiet" id="sign-out" type="button">Sign out</button>
+    </div>
+  </header>
+
+  <main class="main-shell">
+    <section class="auth-view" id="auth-view" aria-labelledby="auth-title">
+      <div class="auth-card">
+        <p class="eyebrow">YOUR ACCOUNT</p>
+        <h1 id="auth-title">Sign in</h1>
+        <p class="muted">Sign in to view your recordings.</p>
+        <form id="sign-in-form" class="form-stack">
+          <label>Email<input id="email" type="email" autocomplete="username" required></label>
+          <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
+          <button class="button button-primary" id="sign-in" type="submit">Sign in</button>
+        </form>
+        <p class="form-message" id="auth-message" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="content-view" id="content-view" hidden>
+      <section class="page" id="recordings-page">
+        <div class="page-heading">
+          <div><p class="eyebrow">YOUR RECORDS</p><h1>Recordings</h1><p class="muted">Choose a date to find a patient recording.</p></div>
+        </div>
+        <label class="search-box"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search dates, names, ages, or genders" aria-label="Search recordings"><button id="clear-search" type="button" aria-label="Clear search" hidden>×</button></label>
+        <p class="result-count" id="result-count" role="status" aria-live="polite"></p>
+        <div class="folder-grid" id="folder-list"></div>
+        <div class="empty-state" id="empty-state" hidden>No recordings found.</div>
+      </section>
+
+      <section class="page" id="folder-page" hidden>
+        <button class="back-button" id="back-folders" type="button">‹ <span>Recordings</span></button>
+        <div class="page-heading folder-title"><div><p class="eyebrow">DATE FOLDER</p><h1 id="folder-date"></h1><p class="muted" id="folder-count"></p></div></div>
+        <label class="search-box"><span aria-hidden="true">⌕</span><input id="folder-search" type="search" placeholder="Search patient recordings" aria-label="Search patient recordings"><button id="clear-folder-search" type="button" aria-label="Clear search" hidden>×</button></label>
+        <p class="result-count" id="folder-result-count" role="status" aria-live="polite"></p>
+        <div class="record-list" id="record-list"></div>
+        <div class="empty-state" id="folder-empty" hidden>No recordings match your search.</div>
+      </section>
+
+      <section class="page" id="detail-page" hidden>
+        <button class="back-button" id="back-folder" type="button">‹ <span id="detail-back-label">Date folder</span></button>
+        <div class="detail-heading"><p class="eyebrow">PATIENT RECORDING</p><h1 id="detail-title"></h1><p class="muted" id="detail-date"></p></div>
+        <div class="patient-facts" id="patient-facts"></div>
+        <p class="clinical-note">This graph displays measurements from the selected patient record. It does not provide a diagnosis or treatment recommendation.</p>
+        <section class="panel chart-panel">
+          <div class="panel-heading"><div><h2>Measurements</h2><p id="measurement-count"></p></div></div>
+          <div class="chart-scroll" role="region" aria-label="Measurement graph" tabindex="0"><svg id="trend-chart" viewBox="0 0 900 490" role="img" aria-label="TOFR, TOFC, and PTC measurements over time"></svg></div>
+          <div class="chart-legend"><span><i class="legend-tofr"></i>TOFR (%)</span><span><i class="legend-tofc"></i>TOFC count</span><span><i class="legend-ptc"></i>PTC count</span></div>
+        </section>
+        <section class="panel readings-panel"><div class="panel-heading"><div><h2>Readings</h2><p id="reading-count"></p></div></div><div class="reading-list" id="reading-list"></div></section>
+      </section>
+    </section>
+
+    <div class="notice" id="notice" role="status" aria-live="polite" hidden></div>
+  </main>
+  <script src="./config.js"></script>
+  <script src="./app.js" defer></script>
+</body>
+</html>

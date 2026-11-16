@@ -11,65 +11,76 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <a class="brand" href="#" aria-label="Medilogix home">
-        <span class="brand-mark"><span></span><span></span><span></span></span>
-        <span><strong>medilogix</strong><small>INSTRUMENT SYSTEMS</small></span>
+      <a class="brand" href="#" aria-label="MedilogiX">
+        <img src="assets/medilogix-logo.png" alt="MedilogiX" />
       </a>
       <nav class="main-nav" aria-label="Main navigation">
-        <button class="nav-item active" data-view="live">Live monitor</button>
+        <button class="nav-item active" data-view="live">Live readings</button>
         <button class="nav-item" data-view="recordings">Recordings <span class="nav-count" id="session-count">0</span></button>
       </nav>
-      <div class="topbar-right"><span class="offline-mark"></span> Runs locally on this computer</div>
+      <div class="topbar-right"><button class="account-button" id="account-button" type="button"><span class="account-avatar" id="account-avatar" aria-hidden="true">·</span><span class="account-button-label" id="account-button-label">Checking account…</span></button></div>
     </header>
 
     <main>
       <section id="live-view" class="view">
         <div class="page-heading">
-          <div><div class="eyebrow">DEVICE WORKSPACE</div><h1>Live monitor</h1><p>Connect your instrument to view and record incoming serial data.</p></div>
+          <div><div class="eyebrow">RECORDING</div><h1>Live readings</h1><p>Connect your instrument to view its readings as they arrive.</p></div>
           <div class="session-chip" id="session-chip"><span class="status-dot"></span><span id="session-state">Ready to connect</span></div>
         </div>
 
         <section class="connect-panel panel">
-          <div class="panel-heading"><div><h2>Instrument connection</h2><p>Available USB serial devices are detected when you connect.</p></div><span class="connect-availability"><span class="offline-mark"></span> Device selection</span></div>
+          <div class="panel-heading"><div><h2>Connect your instrument</h2><p>Connect the instrument to your computer with its USB cable.</p></div></div>
           <div class="connection-controls">
-            <label class="field baud-field"><span>Baud rate</span><select id="baud-select"><option>9600</option><option>19200</option><option>38400</option><option>57600</option><option selected>115200</option></select><small>Current monitor setting: 115200</small></label>
-            <div class="connection-actions"><button class="button button-primary connect-button" id="connect-button"><span class="connect-icon">↔</span> Connect &amp; record</button><button class="button button-demo" id="demo-button"><span class="demo-icon">▷</span> Try sample data</button></div>
+            <label class="field baud-field"><span>Connection speed</span><select id="baud-select"><option>9600</option><option>19200</option><option>38400</option><option>57600</option><option selected>115200</option></select><small>Choose the speed set on your instrument.</small></label>
+            <div class="connection-actions"><button class="button button-primary connect-button" id="connect-button"><span class="connect-icon">↔</span> Connect &amp; record</button></div>
           </div>
-          <div class="connection-footer"><span class="lock-icon">▣</span> Data is saved on this computer as it arrives. No network connection is required.</div>
+          <div class="connection-footer"><span class="lock-icon">▣</span> Disconnect and save your readings before closing the app.</div>
         </section>
 
         <section class="capture-grid">
           <article class="panel monitor-panel">
-            <div class="panel-heading monitor-heading"><div><div class="heading-with-dot"><span class="status-dot" id="monitor-dot"></span><h2>Serial monitor</h2></div><p id="monitor-subtitle">Incoming messages will appear here when connected.</p></div><div class="monitor-actions"><button id="clear-monitor" class="button button-subtle" title="Clear the visible monitor">Clear view</button><button id="disconnect-button" class="button button-danger" disabled>Disconnect</button></div></div>
-            <div class="monitor-toolbar"><span>RECEIVED DATA</span><span id="received-count">0 messages</span></div>
-            <div class="serial-output" id="serial-output" role="log" aria-live="polite"><div class="empty-state"><span class="empty-glyph">⌁</span><strong>Waiting for a connection</strong><span>Choose the instrument port above to begin a recording session.</span></div></div>
-            <div class="monitor-foot"><span><i class="legend-dot"></i>Original instrument messages are retained</span><span id="active-session-id">No active session</span></div>
+            <div class="panel-heading monitor-heading"><div><div class="heading-with-dot"><span class="status-dot" id="monitor-dot"></span><h2>Incoming readings</h2></div><p id="monitor-subtitle">Your instrument readings will appear here.</p></div><div class="monitor-actions"><button id="clear-monitor" class="button button-subtle" title="Clear the readings shown here">Clear readings</button><button id="save-live-recording" class="button button-primary" hidden>Save recordings</button><button id="discard-live-recording" class="button button-danger" hidden>Discard recording</button><button id="disconnect-button" class="button button-danger" disabled>Disconnect</button></div></div>
+            <div class="monitor-toolbar"><span>READINGS</span><span id="received-count">0 readings</span></div>
+            <div class="serial-output" id="serial-output" role="log" aria-live="polite"><div class="empty-state"><span class="empty-glyph">⌁</span><strong>Waiting for your instrument</strong><span>Connect your instrument to begin receiving readings.</span></div></div>
+            <div class="monitor-foot"><span><i class="legend-dot"></i>Original readings are preserved</span><span id="active-session-id">No recording in progress</span></div>
           </article>
           <aside class="side-column">
-            <article class="panel detail-panel"><div class="panel-heading"><div><h2>Session details</h2><p>Current recording</p></div><span class="live-pill" id="recording-pill">STANDBY</span></div><dl class="detail-list"><div><dt>Device</dt><dd id="detail-device">—</dd></div><div><dt>Baud rate</dt><dd id="detail-baud">—</dd></div><div><dt>Started</dt><dd id="detail-start">—</dd></div><div><dt>Messages saved</dt><dd id="detail-record-count">0</dd></div></dl><div class="storage-note"><span class="storage-icon">▤</span><div><strong>Saved continuously</strong><span>Each complete or partial line is retained with its arrival time.</span></div></div></article>
-            <article class="panel next-panel"><div class="next-icon">⌁</div><div class="eyebrow">RECORDING REVIEW</div><h3>Review a saved trend</h3><p>After recording, open the session in Recordings to inspect its original messages and provisional reference-style graph.</p><div class="graph-preview"><span>TOFR</span><span>TOFC</span><span>PTC</span><div class="preview-line"></div></div></article>
+            <article class="panel detail-panel"><div class="panel-heading"><div><h2>Current recording</h2><p>Recording details</p></div><span class="live-pill" id="recording-pill">READY</span></div><dl class="detail-list"><div><dt>Instrument</dt><dd id="detail-device">—</dd></div><div><dt>Connection speed</dt><dd id="detail-baud">—</dd></div><div><dt>Started at</dt><dd id="detail-start">—</dd></div><div><dt>Readings received</dt><dd id="detail-record-count">0</dd></div><div><dt>Saved to account</dt><dd id="detail-cloud-sync">—</dd></div></dl><div class="storage-note"><span class="storage-icon">▤</span><div><strong>Save when ready</strong><span>Readings are kept temporarily while you record. Disconnect, then choose Save recordings to create a separate record for each patient. Closing the app first will discard readings that you have not saved.</span></div></div></article>
           </aside>
         </section>
         <div class="notice" id="notice" role="status" hidden></div>
       </section>
 
       <section id="recordings-view" class="view" hidden>
-        <div class="page-heading"><div><div class="eyebrow">LOCAL DATA</div><h1>Recordings</h1><p>Review saved sessions, inspect their raw messages, and export captured data.</p></div><button class="button button-subtle" id="refresh-sessions">↻ &nbsp; Refresh list</button></div>
-        <section class="panel recordings-panel"><div class="panel-heading"><div><h2>Saved sessions</h2><p>Recordings are stored locally in the application data folder.</p></div><button class="button button-subtle" id="open-recordings-folder">Open recordings folder</button></div><div class="table-wrap"><table><thead><tr><th>SESSION</th><th>DEVICE</th><th>STARTED</th><th>MESSAGES</th><th>STATUS</th><th></th></tr></thead><tbody id="sessions-table"><tr><td colspan="6" class="table-empty">No recordings yet. Connect an instrument to create the first session.</td></tr></tbody></table></div></section>
-        <section class="panel review-panel" id="review-panel" hidden>
-          <div class="panel-heading review-heading"><div><div class="eyebrow">SESSION REVIEW</div><h2 id="review-title">Recording</h2><p id="review-meta"></p></div><button class="button button-subtle" id="close-review">Close review</button></div>
-          <div class="chart-caveat">Exploratory view: the device clock format and clinical band mapping are not confirmed. Sample replay is simulated and must not be used for clinical decisions.</div>
-          <div class="chart-toolbar"><div><strong>Historical data</strong><span id="chart-point-count">0 measurements</span></div><div class="chart-zoom"><button type="button" id="zoom-out" aria-label="Zoom out">−</button><button type="button" id="zoom-in" aria-label="Zoom in">+</button></div></div>
-          <div class="chart-frame"><div class="chart-y-labels"><span>TOFR &gt; 90%</span><span>TOFR &gt; 40%</span><span>TOFR &gt; 10%</span><span>TOFC &gt; 0</span><span>PTC &gt; 0</span><span>PTC = 0</span></div><svg id="trend-chart" viewBox="0 0 900 420" role="img" aria-label="Exploratory TOF and PTC trend chart"></svg><div class="chart-right-labels"><span>Recovered</span><span>Minimal</span><span>Shallow</span><span>Moderate</span><span>Deep</span><span>Profound</span></div></div>
-          <div class="chart-pan-row"><span id="chart-start-label">—</span><input id="chart-pan" type="range" min="0" max="100" value="100" aria-label="Navigate chart timeline"><span id="chart-end-label">—</span></div>
-          <div class="review-table-wrap"><table><thead><tr><th>#</th><th>RECEIVED</th><th>DEVICE TIME</th><th>TYPE</th><th>VALUE</th><th>RAW MESSAGE</th></tr></thead><tbody id="review-records"></tbody></table></div>
+       <div id="recordings-home-page">
+        <div class="page-heading"><div><div class="eyebrow">YOUR RECORDS</div><h1>Recordings</h1><p>Open a date folder to find and review a patient’s record.</p></div><div class="recording-page-actions"><button class="button button-primary" id="import-recordings">＋ &nbsp; Import records</button><button class="button button-subtle" id="refresh-sessions">↻ &nbsp; Refresh</button></div></div>
+        <label class="recording-searchbar"><span class="recording-search-icon" aria-hidden="true">⌕</span><input id="recording-search-home" type="search" placeholder="Search dates, patient names, ages, or genders" aria-label="Search recording dates and patient details"><span class="recording-search-hint">Search all recordings</span></label><p class="recording-search-count" id="recording-search-count-home" role="status" aria-live="polite"></p>
+        <section class="panel recordings-panel patient-recordings-panel"><div class="panel-heading"><div><h2>Patient recordings</h2><p>Each patient recording is stored and reviewed independently under your account.</p></div><button class="button button-subtle" id="open-recordings-folder">Open recordings folder</button></div><div id="patient-recordings-list" class="patient-recordings-list"><div class="recordings-empty">No patient files imported yet.</div></div></section>
+       </div>
+       <section id="patient-folder-page" class="recordings-subpage" hidden>
+        <div class="page-heading"><div><button class="button button-subtle recordings-back" id="back-to-folders">‹ &nbsp; Patient recordings</button><div class="eyebrow">DATE FOLDER</div><h1 id="patient-folder-title">Recordings</h1><p id="patient-folder-meta"></p></div></div>
+        <label class="recording-searchbar"><span class="recording-search-icon" aria-hidden="true">⌕</span><input id="recording-search-folder" type="search" placeholder="Search dates, patient names, ages, or genders" aria-label="Search recording dates and patient details"><span class="recording-search-hint">Search all recordings</span></label><p class="recording-search-count" id="recording-search-count-folder" role="status" aria-live="polite"></p>
+        <section class="panel recordings-panel"><div class="panel-heading"><div><h2>Patient files</h2><p>Choose a patient file to review its complete recording and graph.</p></div></div><div id="patient-folder-files" class="patient-folder-files"></div></section>
+       </section>
+       <section id="recording-detail-page" class="recordings-subpage" hidden>
+        <div class="page-heading"><div><button class="button button-subtle recordings-back" id="back-to-patient-folder">‹ &nbsp; <span id="recording-back-label">Date folder</span></button></div><div class="recording-page-actions"><button class="button button-subtle" id="export-patient-recording">Export spreadsheet</button></div></div>
+        <section class="panel review-panel recording-detail-panel" id="review-panel">
+          <div class="panel-heading review-heading"><div><div class="eyebrow">PATIENT RECORDING</div><h2 id="review-title">Recording overview</h2><p id="review-meta"></p></div></div>
+          <div id="review-visualization"><div class="patient-summary" aria-label="Patient details"><div class="patient-summary-card"><span>Name</span><strong id="review-patient-name">—</strong></div><div class="patient-summary-card"><span>Age</span><strong id="review-patient-age">—</strong></div><div class="patient-summary-card"><span>Gender</span><strong id="review-patient-gender">—</strong></div></div><div class="chart-caveat">This graph displays readings from the selected patient record. It does not provide a diagnosis or treatment recommendation.</div>
+          <div class="chart-toolbar"><div><strong>Measurements</strong><span id="chart-point-count">0 measurements</span></div><div class="chart-zoom"><button type="button" id="zoom-out" aria-label="Zoom out">−</button><button type="button" id="zoom-in" aria-label="Zoom in">+</button></div></div>
+          <div class="chart-frame"><svg id="trend-chart" viewBox="0 0 1400 450" role="img" aria-label="Graph showing TOFR, TOFC, and PTC readings over time"></svg></div>
+          <div class="chart-pan-row"><span id="chart-start-label">—</span><input id="chart-pan" type="range" min="0" max="100" value="100" aria-label="Navigate chart timeline"><span id="chart-end-label">—</span></div></div>
+          <div id="review-raw-data" class="review-table-wrap"><table><thead><tr><th>#</th><th>TIME SAVED</th><th>INSTRUMENT TIME</th><th>READING</th><th>VALUE</th><th>ORIGINAL MESSAGE</th></tr></thead><tbody id="review-records"></tbody></table></div>
         </section>
-        <p class="privacy-caption"><span class="lock-icon">▣</span> Recordings stay on this device unless you choose to export a CSV file.</p>
+       </section>
+       <p class="privacy-caption" id="recordings-privacy"><span class="lock-icon">▣</span> Your records are saved on this computer. Sign in to back them up to your account.</p>
       </section>
     </main>
-    <footer><span>MEDILOGIX TOF <span class="footer-sep">·</span> DEVICE DATA CAPTURE</span><span>Offline ready <i class="offline-mark"></i></span></footer>
+    <footer><span>MedilogiX</span></footer>
   </div>
-  <dialog class="device-dialog" id="device-dialog"><div class="dialog-top"><span class="eyebrow">USB DEVICE SELECTION</span><button class="dialog-close" id="cancel-device-picker" aria-label="Cancel">×</button></div><h2>Select your instrument</h2><p class="dialog-description">Choose the USB serial device connected to your instrument.</p><div class="device-options" id="device-options"></div><div class="dialog-foot">You can reconnect the same device later from this screen.</div></dialog>
+  <dialog class="import-dialog" id="import-dialog"><div class="dialog-top"><span class="eyebrow">PATIENT RECORDING IMPORT</span><button class="dialog-close" id="close-import-dialog" type="button" aria-label="Close">×</button></div><h2>Review detected recordings</h2><p class="dialog-description" id="import-description">Check the patient details for each detected recording before saving.</p><form id="import-patients-form"><div id="import-patient-fields" class="import-patient-fields"></div><div class="import-dialog-actions"><button class="button button-subtle" id="cancel-import" type="button">Cancel</button><button class="button button-primary" id="confirm-import" type="submit">Save recordings</button></div></form></dialog>
+  <dialog class="device-dialog" id="device-dialog"><div class="dialog-top"><span class="eyebrow">INSTRUMENT</span><button class="dialog-close" id="cancel-device-picker" aria-label="Cancel">×</button></div><h2>Select your instrument</h2><p class="dialog-description">Choose the instrument connected to your computer.</p><div class="device-options" id="device-options"></div><div class="dialog-foot">You can reconnect your instrument from this screen.</div></dialog>
+  <dialog class="account-dialog" id="account-dialog"><div class="dialog-top"><span class="eyebrow">ACCOUNT</span><button class="dialog-close" id="close-account-dialog" type="button" aria-label="Close">×</button></div><h2 id="account-heading">Sign in to your account</h2><p class="dialog-description" id="account-description">Sign in to back up and access your recordings from your account.</p><form id="account-form" class="account-form"><label id="signup-name-field" hidden>Your name<input id="signup-name" type="text" autocomplete="name" maxlength="120"></label><label id="signup-phone-field" hidden>Phone number<input id="signup-phone" type="tel" autocomplete="tel" maxlength="40"></label><label>Email<input id="account-email" type="email" autocomplete="username" required></label><label>Password<input id="account-password" type="password" autocomplete="current-password" minlength="6" required></label><button class="button button-primary" id="account-submit" type="submit">Sign in</button></form><form id="profile-form" class="account-form" hidden><label>Your name<input id="profile-name" type="text" autocomplete="name" maxlength="120" required></label><label>Email<input id="profile-email" type="email" readonly></label><label>Phone number<input id="profile-phone" type="tel" autocomplete="tel" maxlength="40" required></label><button class="button button-primary" id="profile-save" type="submit">Save profile</button></form><button class="account-mode-toggle" id="account-mode-toggle" type="button">New here? Create an account</button><p class="account-state" id="account-state" role="status"></p><button class="button button-subtle account-signout" id="account-signout" type="button" hidden>Sign out</button><div class="dialog-foot" id="account-dialog-foot">Creating an account may require email confirmation.</div></dialog>
   <script src="visualization.js"></script>
   <script src="renderer.js"></script>
 </body>

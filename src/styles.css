@@ -3,20 +3,13 @@
 body{margin:0;min-width:900px;min-height:100vh}
 .app-shell{min-height:100vh;display:flex;flex-direction:column}
 .topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 42px;gap:66px}
-.brand{display:flex;align-items:center;gap:11px;color:var(--navy);text-decoration:none;min-width:196px}
-.brand strong{display:block;font:800 21px Manrope,sans-serif;letter-spacing:-1.2px}
-.brand small{display:block;font-size:8px;font-weight:700;letter-spacing:1.5px;color:#7c8ba0;margin-top:1px}
-.brand-mark{width:28px;height:28px;border:2px solid #cfe6dc;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:2px;transform:rotate(-8deg)}
-.brand-mark span{width:3px;border-radius:4px;background:#168760}
-.brand-mark span:nth-child(1){height:8px}
-.brand-mark span:nth-child(2){height:15px}
-.brand-mark span:nth-child(3){height:11px}
+.brand{display:flex;align-items:center;color:var(--navy);text-decoration:none;width:174px;min-width:174px}
+.brand img{display:block;width:100%;height:auto;object-fit:contain}
 .main-nav{align-self:stretch;display:flex;gap:30px}
 .nav-item{border:0;border-bottom:2px solid transparent;background:none;color:#728096;font:600 13px inherit;padding:2px 2px 0;cursor:pointer}
 .nav-item.active{color:#142a44;border-color:var(--green)}
 .nav-count{display:inline-flex;align-items:center;justify-content:center;margin-left:5px;min-width:19px;height:19px;border-radius:10px;background:#f0f3f7;color:#66758a;font-size:11px}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:9px;color:#768499;font-size:12px}
-.offline-mark{display:inline-block;width:8px;height:8px;background:#29ab7d;border-radius:50%;box-shadow:0 0 0 3px #e6f6ef}
 main{width:min(1260px,calc(100% - 84px));margin:0 auto;flex:1;padding:40px 0 30px}
 .page-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:25px}
 .eyebrow{color:#72839a;font-size:10px;font-weight:700;letter-spacing:1.45px}
@@ -85,16 +78,6 @@ main{width:min(1260px,calc(100% - 84px));margin:0 auto;flex:1;padding:40px 0 30p
 .storage-note strong,.storage-note span{display:block}
 .storage-note strong{color:#35624f;font-size:10px;margin-bottom:4px}
 .storage-note span{color:#7d9186;font-size:10px;line-height:1.45}
-.next-panel{padding:19px;position:relative;overflow:hidden}
-.next-icon{position:absolute;right:18px;top:15px;font-size:29px;color:#bddbcc}
-.next-panel .eyebrow{font-size:9px}
-.next-panel h3{font:700 14px Manrope,sans-serif;margin:7px 0;color:#253951}
-.next-panel p{font-size:10px;line-height:1.6;color:#7b899b;margin:0 0 16px;max-width:275px}
-.graph-preview{height:51px;border:1px solid #e8edf2;border-radius:4px;position:relative;display:flex;justify-content:space-around;align-items:flex-start;padding-top:5px;color:#9aa7b5;font-size:8px;overflow:hidden}
-.graph-preview:before,.graph-preview:after{content:"";position:absolute;left:0;right:0;border-top:1px dashed #e7ecef;top:18px}
-.graph-preview:after{top:34px}
-.preview-line{position:absolute;left:17%;right:15%;top:9px;height:27px;border-bottom:2px solid #30a46c;border-radius:0 0 45% 55%;transform:skewY(-8deg)}
-.preview-line:after{content:"";position:absolute;width:100%;height:18px;right:-2px;top:2px;border-top:2px solid #30a46c;border-radius:50%;transform:rotate(-5deg)}
 .notice{position:fixed;bottom:25px;right:28px;max-width:480px;padding:12px 16px;border-radius:7px;background:#27384f;color:white;box-shadow:0 8px 24px #12243b30;font-size:12px;z-index:3}
 .notice.error{background:#9c4242}
 .recordings-panel{padding-top:20px}
@@ -110,17 +93,20 @@ td{padding:15px 16px;border-top:1px solid #edf1f5;color:#4b5c71;font-size:11px}
 .table-status.recording{background:#e7f6ef;color:#18815c}
 .table-action{border:0;background:none;color:#346bd8;font:600 11px inherit;cursor:pointer;padding:4px}
 .privacy-caption{display:flex;gap:8px;align-items:center;color:#8391a3;font-size:10px;padding:15px 3px}
-.review-panel{margin-top:22px;padding:20px 22px 18px;scroll-margin-top:14px}
+.review-panel{margin-top:22px;padding:18px 20px 16px;scroll-margin-top:14px}
 .review-heading{padding:0 0 15px}
 .review-heading h2{font:700 15px Manrope,sans-serif;margin:5px 0 4px;color:#253951}
 .review-heading p{margin:0;color:#7b899b;font-size:10px}
+.patient-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 14px}
+.patient-summary-card{display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0;min-height:62px;padding:10px 15px;border:1px solid #e2e9ef;border-radius:8px;background:linear-gradient(135deg,#fbfcfe,#f6f9fb)}
+.patient-summary-card span{color:#738399;font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase}
+.patient-summary-card strong{overflow:hidden;color:#1e3046;font-size:14px;font-weight:700;text-overflow:ellipsis;white-space:nowrap}
 .chart-caveat{border:1px solid #f0dfb8;background:#fffaf0;color:#87652a;border-radius:6px;padding:10px 12px;font-size:10px;line-height:1.5;margin-bottom:14px}
 .chart-toolbar{display:flex;justify-content:space-between;align-items:center;padding:0 8px 9px;color:#566579}
 .chart-toolbar>div:first-child{display:flex;align-items:center;gap:12px}.chart-toolbar strong{text-transform:uppercase;font-size:11px;letter-spacing:.3px;color:#283d54}.chart-toolbar span{font-size:10px;color:#8290a1}
 .chart-zoom{display:flex;gap:5px}.chart-zoom button{width:27px;height:25px;border:1px solid #dce4eb;background:#fff;border-radius:4px;color:#455a71;font-size:16px;cursor:pointer}.chart-zoom button:hover{background:#f2f6f8}
-.chart-frame{display:grid;grid-template-columns:116px minmax(0,1fr) 76px;align-items:stretch;border:3px solid #43515d;background:#fff;min-height:300px}
-.chart-y-labels,.chart-right-labels{display:flex;flex-direction:column;justify-content:space-around;padding:22px 6px 24px;color:#5d6b78;font-size:9px;line-height:1.2}.chart-y-labels{text-align:right}.chart-right-labels{border-left:1px solid #dce3e8}
-#trend-chart{display:block;width:100%;height:auto;min-height:300px;max-height:460px}
+.chart-frame{display:block;overflow:hidden;border:1px solid #dce4eb;border-radius:6px;background:#fff}
+#trend-chart{display:block;width:100%;height:auto;min-height:0;max-height:none}
 .chart-pan-row{display:grid;grid-template-columns:minmax(130px,1fr) 2fr minmax(150px,1fr);align-items:center;gap:13px;padding:10px 14px 14px;color:#768599;font-size:9px}.chart-pan-row span:last-child{text-align:right}#chart-pan{width:100%;accent-color:#17607b}
 .review-table-wrap{overflow:auto;border-top:1px solid #e9eef2;max-height:310px}.review-table-wrap table{min-width:790px}.review-table-wrap th{position:sticky;top:0;z-index:1}.review-table-wrap td{padding:9px 11px;font-size:10px;vertical-align:top}.review-raw{font-family:Consolas,'Cascadia Code',monospace;color:#287a53;white-space:pre-wrap;overflow-wrap:anywhere;min-width:185px}.record-incomplete td{background:#fffaf2}
 footer{min-height:47px;border-top:1px solid #e8edf2;background:#fff;padding:0 42px;display:flex;align-items:center;justify-content:space-between;color:#8a97a8;font-size:9px;font-weight:700;letter-spacing:.8px}
@@ -136,7 +122,7 @@ footer{padding:0 25px}
 }
 @media(max-width:780px){body{min-width:620px}
 .topbar{gap:16px}
-.brand{min-width:175px}
+.brand{width:160px;min-width:160px}
 .topbar-right{font-size:10px}
 .capture-grid{grid-template-columns:1fr}
 .side-column{grid-template-columns:1fr 1fr}
@@ -144,7 +130,7 @@ footer{padding:0 25px}
 .port-field{flex-basis:55%}
 .connect-button{flex:1}
 }
-@media(max-width:780px){.chart-frame{grid-template-columns:84px minmax(0,1fr) 62px}.chart-y-labels,.chart-right-labels{font-size:8px;padding-left:3px;padding-right:3px}.chart-pan-row{grid-template-columns:1fr 2fr 1fr;gap:7px;font-size:8px}}
+@media(max-width:780px){.chart-pan-row{grid-template-columns:1fr 2fr 1fr;gap:7px;font-size:8px}}
 
 
 .nav-item,.button,.table-action{font-family:inherit}
@@ -166,6 +152,17 @@ footer{padding:0 25px}
 .device-option-chevron{color:#8492a4;font-size:20px}
 .device-empty{padding:12px;border:1px dashed #dce4eb;border-radius:7px;color:#7b899b;font-size:12px;line-height:1.5;text-align:center}
 .dialog-foot{padding:13px 24px 17px;border-top:1px solid #edf1f5;color:#8794a5;font-size:10px}
-.connect-availability{display:flex;align-items:center;gap:8px;color:#718096;font-size:11px}
 .session-chip.connected{color:#187e59;border-color:#d8eee3;background:#f7fcf9}
-.connection-actions{display:flex;align-items:center;gap:9px;margin-left:auto}.connection-actions .connect-button{margin-left:0}.button-demo{height:42px;border-color:#dce8e1;background:#f7fbf8;color:#2d7458;white-space:nowrap}.button-demo:hover:not(:disabled){background:#edf7f1}.button-demo:disabled{opacity:.5}.demo-icon{font-size:14px;margin-right:7px}
+.connection-actions{display:flex;align-items:center;gap:9px;margin-left:auto}.connection-actions .connect-button{margin-left:0}
+.account-button{display:flex;align-items:center;gap:8px;border:1px solid #dce8e1;background:#f7fbf8;color:#287052;border-radius:18px;padding:4px 10px 4px 5px;font:600 11px inherit;cursor:pointer;max-width:220px;overflow:hidden;white-space:nowrap}.account-button:hover{background:#edf7f1}.account-avatar{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:#dff1e7;color:#217451;font-size:10px;font-weight:700}.account-button-label{overflow:hidden;text-overflow:ellipsis}
+.account-dialog{width:min(440px,calc(100% - 40px));max-width:440px;padding:0;border:1px solid #e0e7ee;border-radius:12px;background:#fff;color:#1d2b40;box-shadow:0 22px 80px #14263d38}.account-dialog::backdrop{background:#15263d66;backdrop-filter:blur(2px)}.account-dialog h2{font:700 22px 'Segoe UI',sans-serif;letter-spacing:-.5px;margin:10px 24px 5px}.account-form{display:grid;gap:13px;padding:0 24px 10px}.account-form label{display:grid;gap:6px;color:#53657b;font-size:11px;font-weight:700}.account-form input{height:39px;border:1px solid #dce4ee;border-radius:6px;padding:0 10px;color:#233750;font:13px inherit}.account-form .button{height:39px}.account-state{min-height:18px;margin:0 24px 12px;color:#6a7a8e;font-size:11px}.account-state.error{color:#a64242}.account-signout{margin:0 24px 14px}.account-dialog .dialog-foot{margin-top:4px}
+.account-mode-toggle{display:block;margin:0 24px 12px;padding:0;border:0;background:none;color:#287052;font:600 12px 'Segoe UI',sans-serif;cursor:pointer}.account-mode-toggle:hover{text-decoration:underline}.account-mode-toggle:focus-visible{outline:2px solid #f39a24;outline-offset:3px;border-radius:2px}
+.recording-page-actions{display:flex;align-items:center;gap:8px}.patient-recordings-panel{margin-bottom:18px}.patient-recordings-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px;padding:0 20px 18px;align-items:start}.recordings-empty{padding:20px 4px;color:#8491a2;font-size:12px;grid-column:1/-1}.patient-date-folder{min-width:0}.patient-date-heading{display:grid;grid-template-columns:36px minmax(0,1fr) 14px;gap:13px;align-items:center;min-height:82px;padding:14px 16px;color:#2a3c52;font-size:12px;font-weight:650;background:#fbfcfd;border:1px solid #e4eaf0;border-radius:8px;cursor:pointer;list-style:none;transition:background .15s,border-color .15s,box-shadow .15s}.patient-date-heading::-webkit-details-marker{display:none}.patient-date-heading:hover{background:#f6faf8;border-color:#d6e7de;box-shadow:0 3px 10px #24364b0b}.patient-date-heading:focus-visible{outline:2px solid #159b70;outline-offset:2px}.patient-date-folder[open]>.patient-date-heading{background:#f5faf7;border-color:#cfe5d9;border-radius:8px 8px 0 0}.patient-folder-icon{width:26px;height:26px;color:#159b70}.patient-folder-info{display:grid;gap:5px;min-width:0}.patient-folder-date{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}.patient-folder-count{color:#748397;font-size:10px;font-weight:500}.patient-folder-chevron{width:9px;height:9px;border-right:1.5px solid #748397;border-bottom:1.5px solid #748397;transform:rotate(-45deg);transition:transform .15s}.patient-date-folder[open]>.patient-date-heading .patient-folder-chevron{transform:rotate(45deg)}.patient-date-folder-content{padding:4px 14px 2px;border:1px solid #cfe5d9;border-top:0;border-radius:0 0 8px 8px;background:#fff}.patient-recording-row{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(120px,1fr) minmax(100px,.8fr) auto;gap:14px;align-items:center;padding:12px 4px;border-bottom:1px solid #edf1f4}.patient-recording-row:last-child{border-bottom:0}.patient-recording-name{font-size:12px;font-weight:700;color:#2a3c52}.patient-recording-details{margin-top:4px;color:#8190a2;font-size:10px}.patient-recording-source{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#748397;font-size:10px}.patient-recording-actions{display:flex;gap:6px;justify-content:flex-end}.patient-recording-actions .table-action{white-space:nowrap}.import-dialog{width:min(720px,calc(100% - 32px));max-width:720px;max-height:min(86vh,820px);overflow:auto;padding:0;border:1px solid #e0e7ee;border-radius:12px;background:#fff;color:#1d2b40;box-shadow:0 22px 80px #14263d38}.import-dialog::backdrop{background:#15263d66;backdrop-filter:blur(2px)}.import-dialog h2{font:700 22px 'Segoe UI',sans-serif;letter-spacing:-.5px;margin:10px 24px 5px}.import-patient-fields{display:grid;gap:10px;padding:0 24px 18px}.import-patient-card{border:1px solid #e2e9ef;border-radius:8px;padding:14px;background:#fbfcfd}.import-patient-card-heading{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.import-patient-card-heading strong{font-size:12px;color:#2a3c52}.import-patient-card-heading span{font-size:10px;color:#8190a2}.import-patient-inputs{display:grid;grid-template-columns:1fr 1.5fr .65fr 1fr;gap:9px}.import-patient-inputs label{display:grid;gap:5px;color:#53657b;font-size:10px;font-weight:700}.import-patient-inputs input,.import-patient-inputs select{width:100%;height:36px;border:1px solid #dce4ee;border-radius:5px;padding:0 8px;color:#233750;background:#fff;font:12px inherit}.import-dialog-actions{position:sticky;bottom:0;display:flex;justify-content:flex-end;gap:8px;padding:12px 24px 18px;background:#fff;border-top:1px solid #edf1f5}.import-dialog-actions .button{height:38px}
+[hidden]{display:none!important}
+.patient-date-folder[open]{grid-column:1/-1}
+@media(max-width:780px){.patient-recording-row{grid-template-columns:1fr auto}.patient-recording-source{display:none}.patient-recording-actions{flex-wrap:wrap}.patient-folder-count{justify-self:end}.import-patient-inputs{grid-template-columns:1fr 1fr}.recording-page-actions{flex-wrap:wrap;justify-content:flex-end}}
+.patient-date-heading{width:100%;font-family:inherit;text-align:left}.recordings-subpage .page-heading{align-items:flex-end}.recordings-back{margin-bottom:12px}.patient-folder-files{padding:0 20px 18px}.patient-file-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #edf1f4}.patient-file-row:last-child{border-bottom:0}.patient-file-open{display:grid;grid-template-columns:34px minmax(150px,1.1fr) minmax(150px,1fr) auto 12px;gap:12px;align-items:center;min-width:0;padding:9px 8px;border:0;border-radius:7px;background:transparent;text-align:left;font:inherit;cursor:pointer}.patient-file-open:hover{background:#f7faf8}.patient-file-open:focus-visible{outline:2px solid #159b70;outline-offset:1px}.patient-file-icon{display:grid;place-items:center;width:30px;height:34px;border:1px solid #dce8e1;border-radius:6px;background:#f7fbf8;color:#287052;font-size:17px}.patient-file-identity{display:grid;gap:4px;min-width:0}.patient-file-identity strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#2a3c52;font-size:12px}.patient-file-identity small,.patient-file-meta{color:#8190a2;font-size:10px}.patient-file-meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.patient-file-arrow{width:8px;height:8px;border-top:1.5px solid #748397;border-right:1.5px solid #748397;transform:rotate(45deg)}.patient-file-actions{display:flex;gap:6px;justify-content:flex-end}.recording-detail-panel{margin-top:0}.recording-detail-panel .review-table-wrap{max-height:none;overflow:auto}.recording-detail-panel .review-panel{margin-top:0}
+@media(max-width:780px){.patient-file-row{grid-template-columns:1fr}.patient-file-open{grid-template-columns:32px minmax(0,1fr) 10px}.patient-file-meta,.patient-file-open .table-status{display:none}.patient-file-actions{padding-left:45px}.recordings-subpage .page-heading{align-items:flex-start}}
+.recording-searchbar{position:relative;display:flex;align-items:center;margin:-10px 0 18px}.recording-searchbar input{width:100%;height:43px;padding:0 185px 0 42px;border:1px solid #dce4ee;border-radius:7px;background:#fff;color:#263950;font:12px inherit;box-shadow:0 1px 3px #1f34500a;transition:border-color .15s,box-shadow .15s}.recording-searchbar input::placeholder{color:#92a0af}.recording-searchbar input:focus{outline:0;border-color:#80bda3;box-shadow:0 0 0 3px #15966c18}.recording-search-icon{position:absolute;left:15px;color:#718096;font-size:23px;line-height:1;transform:rotate(-15deg);pointer-events:none}.recording-search-hint{position:absolute;right:14px;color:#91a0af;font-size:10px;pointer-events:none}
+@media(max-width:780px){.recording-searchbar input{padding-right:12px}.recording-search-hint{display:none}}
+.recording-searchbar{margin-bottom:2px}.recording-search-count{min-height:16px;margin:0 0 14px 3px;color:#8190a2;font-size:10px}

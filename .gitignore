@@ -1,4 +1,8 @@
 node_modules/
 release/
 dist/
+mobile-viewer/config.js
 *.log
+.env
+.env.*
+!.env.example

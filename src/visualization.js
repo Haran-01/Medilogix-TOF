@@ -1,128 +1,145 @@
 (() => {
-  const NS = 'http://www.w3.org/2000/svg';
-  const palette = { green: '#2daf57', yellow: '#e9bf25', orange: '#dc7936', red: '#d94c43', ink: '#364655', grid: '#d8e0e6' };
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const COLORS = { tofr: '#239f3a', tofc: '#d99b00', ptc: '#ff790d' };
+  const LABELS = { tofr: 'TOFR (%)', tofc: 'TOFC count', ptc: 'PTC count' };
+  const PANELS = {
+    tofr: { top: 40, bottom: 214, min: 0, max: 100, ticks: [0, 50, 100], label: 'TOFR (%)' },
+    tofc: { top: 230, bottom: 278, min: 0, max: 4, ticks: [0, 2, 4], label: 'TOFC count (out of 4)' },
+    ptc: { top: 294, bottom: 364, min: 0, max: 20, ticks: [0, 10, 20], label: 'PTC count (out of 20)' }
+  };
+  const plot = { left: 230, right: 1370, top: 40, bottom: 364 };
 
-  function svgNode(name, attrs = {}, text = '') {
-    const node = document.createElementNS(NS, name);
+  function svg(tag, attrs = {}, text = '') {
+    const node = document.createElementNS(SVG_NS, tag);
     for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, String(value));
     if (text) node.textContent = text;
     return node;
   }
 
-  function clockMinutes(value) {
+  function minuteValue(value) {
     const match = String(value || '').match(/^(\d{1,2}):(\d{2})$/);
     if (!match) return null;
-    const hours = Number(match[1]); const minutes = Number(match[2]);
-    return hours < 24 && minutes < 60 ? hours * 60 + minutes : null;
+    return Number(match[1]) * 60 + Number(match[2]);
   }
 
   function preparePoints(records) {
-    let previousClock = null;
-    let dayOffset = 0;
     let segment = 0;
-    let headerCount = 0;
-    return records.flatMap((record) => {
+    let previousMinute = null;
+    let dayOffset = 0;
+    const points = [];
+    for (const record of records || []) {
       if (record.type === 'date_header') {
-        if (headerCount > 0) segment += 1;
-        headerCount += 1;
-        return [];
+        segment += 1;
+        previousMinute = null;
+        dayOffset = 0;
+        continue;
       }
-      if (!record.complete) return [];
-      const type = record.type;
-      if (!['tof_ratio', 'tof_count', 'ptc_count'].includes(type) || !Number.isFinite(Number(record.value))) return [];
-      const nativeValue = Number(record.value);
-      let y;
-      if (type === 'tof_ratio') y = 240 - Math.max(0, Math.min(nativeValue, 100)) * 1.55;
-      else if (type === 'tof_count') {
-        const denominator = Number(record.denominator) || 4;
-        y = 310 - Math.max(0, Math.min(nativeValue, denominator)) / denominator * 65;
-      } else {
-        const denominator = Number(record.denominator) || 20;
-        y = 365 - Math.max(0, Math.min(nativeValue, denominator)) / denominator * 95;
-      }
-      let x = clockMinutes(record.deviceTime);
-      if (x !== null) {
-        if (previousClock !== null && x < previousClock && previousClock - x > 720) dayOffset += 1440;
-        previousClock = x;
-        x += dayOffset;
-      } else {
-        const received = Date.parse(record.receivedAt);
-        x = Number.isNaN(received) ? (record.sequence || 0) : received / 60000;
-      }
-      const valueLabel = type === 'tof_ratio' ? `TOFR ${nativeValue}%` : `${type === 'tof_count' ? 'TOFC' : 'PTC'} ${nativeValue}/${Number(record.denominator) || (type === 'tof_count' ? 4 : 20)}`;
-      const timeLabel = record.deviceTime || (record.receivedAt ? new Date(record.receivedAt).toLocaleTimeString() : '');
-      return [{ x, y, type, record, valueLabel, timeLabel, segment }];
-    });
+      const metric = record.type === 'tof_ratio' ? 'tofr' : record.type === 'tof_count' ? 'tofc' : record.type === 'ptc_count' ? 'ptc' : null;
+      const minute = minuteValue(record.deviceTime);
+      if (!metric || minute === null || !Number.isFinite(Number(record.value))) continue;
+      if (previousMinute !== null && minute < previousMinute) dayOffset += 1440;
+      previousMinute = minute;
+      points.push({ ...record, metric, xTime: minute + dayOffset, segment });
+    }
+    return points;
   }
 
-  function colorAt(y) {
-    if (y <= 190) return palette.green;
-    if (y <= 240) return palette.yellow;
-    if (y <= 315) return palette.orange;
-    return palette.red;
+  function formatTime(minutes) {
+    const value = ((Math.round(minutes) % 1440) + 1440) % 1440;
+    return `${String(Math.floor(value / 60)).padStart(2, '0')}:${String(value % 60).padStart(2, '0')}`;
   }
 
-  function fmtElapsed(minutes) {
-    const rounded = Math.max(0, Math.round(minutes));
-    const hours = Math.floor(rounded / 60);
-    const mins = rounded % 60;
-    return hours ? `${hours}h ${String(mins).padStart(2, '0')}m` : `${mins}m`;
-  }
-
-  function render(records, pan = 100, zoom = 1) {
-    const svg = document.querySelector('#trend-chart');
-    const all = preparePoints(records);
-    const countNode = document.querySelector('#chart-point-count');
-    countNode.textContent = `${all.length} measurement${all.length === 1 ? '' : 's'}`;
-    const firstHeader = records.find((record) => record.type === 'date_header')?.sourceDate;
-    const startLabel = document.querySelector('#chart-start-label');
-    const endLabel = document.querySelector('#chart-end-label');
-    if (!all.length) {
-      svg.replaceChildren();
-      svg.append(svgNode('text', { x: 450, y: 200, 'text-anchor': 'middle', fill: '#748296', 'font-size': 15 }, 'No recognized TOFR, TOFC, or PTC measurements in this session.'));
-      startLabel.textContent = firstHeader ? `Device date text: ${firstHeader} (unconfirmed)` : 'No device time';
-      endLabel.textContent = '—';
+  function renderSessionChart(records, pan = 100, zoom = 1) {
+    const chart = document.querySelector('#trend-chart');
+    if (!chart) return;
+    chart.replaceChildren();
+    chart.setAttribute('viewBox', '0 0 1400 450');
+    const points = preparePoints(records);
+    const countLabel = document.querySelector('#chart-point-count');
+    if (countLabel) countLabel.textContent = `${points.length} measurements`;
+    if (!points.length) {
+      chart.append(svg('text', { x: 700, y: 220, 'text-anchor': 'middle', fill: '#68798b', 'font-size': 16 }, 'No measurements to display'));
+      const start = document.querySelector('#chart-start-label'); if (start) start.textContent = '—';
+      const end = document.querySelector('#chart-end-label'); if (end) end.textContent = '—';
       return;
     }
 
-    const visibleCount = Math.max(5, Math.ceil(all.length / Math.max(1, zoom)));
-    const maxStart = Math.max(0, all.length - Math.min(visibleCount, all.length));
-    const begin = Math.round(maxStart * Math.max(0, Math.min(Number(pan) / 100, 1)));
-    const points = all.slice(begin, begin + visibleCount);
-    const minX = Math.min(...points.map((point) => point.x));
-    const maxX = Math.max(...points.map((point) => point.x));
-    const xSpan = maxX - minX || 1;
-    const left = 45; const right = 870; const top = 30; const bottom = 380;
-    const xPos = (point) => left + ((point.x - minX) / xSpan) * (right - left);
-    svg.replaceChildren();
-    svg.append(svgNode('rect', { x: 0, y: 0, width: 900, height: 420, fill: '#fff' }));
-    svg.append(svgNode('rect', { x: left, y: top, width: right - left, height: bottom - top, fill: '#fff', stroke: palette.ink, 'stroke-width': 1.4 }));
-    const guides = [
-      { y: 100, text: '90%' }, { y: 178, text: '40%' }, { y: 224, text: '10%' },
-      { y: 255, text: 'TOFC > 0' }, { y: 310, text: 'PTC > 0' }, { y: 365, text: 'PTC = 0' }
-    ];
-    guides.forEach(({ y }) => svg.append(svgNode('line', { x1: left, x2: right, y1: y, y2: y, stroke: y < 240 ? '#42bc60' : y < 300 ? '#38a989' : '#d27b44', 'stroke-width': 1.5, 'stroke-dasharray': '5 4' })));
-    for (let i = 1; i < 5; i += 1) {
-      const y = top + ((bottom - top) * i) / 5;
-      svg.append(svgNode('line', { x1: left, x2: right, y1: y, y2: y, stroke: '#e6ebef', 'stroke-width': 1 }));
+    // Avoid spreading large recordings into function arguments; imported files can
+    // contain enough measurements to exceed the engine's argument-count limit.
+    let allStart = Infinity;
+    let allEnd = -Infinity;
+    for (const point of points) {
+      if (point.xTime < allStart) allStart = point.xTime;
+      if (point.xTime > allEnd) allEnd = point.xTime;
     }
-    const mapped = points.map((point) => ({ ...point, px: xPos(point) }));
-    for (let i = 1; i < mapped.length; i += 1) {
-      const a = mapped[i - 1]; const b = mapped[i];
-      if (a.segment === b.segment) svg.append(svgNode('line', { x1: a.px, y1: a.y, x2: b.px, y2: b.y, stroke: colorAt((a.y + b.y) / 2), 'stroke-width': 2, 'stroke-linecap': 'round' }));
+    const total = Math.max(1, allEnd - allStart);
+    const visibleDuration = Math.max(1, total / Math.max(1, Number(zoom) || 1));
+    const availablePan = Math.max(0, total - visibleDuration);
+    const viewStart = allStart + availablePan * (Math.min(100, Math.max(0, Number(pan) || 0)) / 100);
+    const viewEnd = viewStart + visibleDuration;
+    const visible = points.filter((point) => point.xTime >= viewStart && point.xTime <= viewEnd);
+    const x = (value) => plot.left + ((value - viewStart) / Math.max(1, viewEnd - viewStart)) * (plot.right - plot.left);
+    const y = (point) => {
+      const panel = PANELS[point.metric];
+      const max = Math.max(panel.max, Number(point.denominator) || 0);
+      return panel.bottom - (Math.min(max, Math.max(0, Number(point.value))) / max) * (panel.bottom - panel.top);
+    };
+
+    // Each metric occupies its own native-value lane. All lanes share the same time scale.
+    for (const [metric, panel] of Object.entries(PANELS)) {
+      const compactLabel = metric === 'tofr' ? 'TOFR (%)' : `${metric.toUpperCase()} count`;
+      chart.append(svg('text', { x: 14, y: (panel.top + panel.bottom) / 2, 'text-anchor': 'start', 'dominant-baseline': 'middle', fill: COLORS[metric], 'font-size': 14, 'font-weight': 700 }, compactLabel));
+      for (const tick of panel.ticks) {
+        const yy = panel.bottom - (tick / panel.max) * (panel.bottom - panel.top);
+        chart.append(svg('line', { x1: plot.left, y1: yy, x2: plot.right, y2: yy, stroke: tick === panel.min ? '#c8cdd2' : '#d9dde1', 'stroke-width': tick === panel.min ? 2 : 1 }));
+        chart.append(svg('text', { x: plot.left - 9, y: yy + 4, 'text-anchor': 'end', fill: '#596a79', 'font-size': 11 }, String(tick)));
+      }
     }
-    mapped.forEach((point) => {
-      const circle = svgNode('circle', { cx: point.px, cy: point.y, r: 3.2, fill: colorAt(point.y), stroke: '#fff', 'stroke-width': 1 });
-      circle.append(svgNode('title', {}, `${point.timeLabel} · ${point.valueLabel} · received ${point.record.receivedAt || 'time unavailable'}`));
-      svg.append(circle);
-    });
-    const first = points[0]; const last = points[points.length - 1];
-    svg.append(svgNode('text', { x: left, y: 403, fill: '#627184', 'font-size': 11 }, first.timeLabel));
-    svg.append(svgNode('text', { x: right, y: 403, fill: '#627184', 'font-size': 11, 'text-anchor': 'end' }, last.timeLabel));
-    svg.append(svgNode('text', { x: right - 4, y: 393, fill: '#627184', 'font-size': 10, 'text-anchor': 'end' }, `Elapsed ${fmtElapsed(last.x - first.x)}`));
-    startLabel.textContent = firstHeader ? `Device date text: ${firstHeader} (unconfirmed)` : `From ${first.timeLabel || 'start'}`;
-    endLabel.textContent = `To ${last.timeLabel || 'end'} · elapsed ${fmtElapsed(last.x - first.x)}`;
+    chart.append(svg('line', { x1: plot.left, y1: plot.top, x2: plot.left, y2: plot.bottom, stroke: '#465563', 'stroke-width': 1.5 }));
+    chart.append(svg('line', { x1: plot.left, y1: 380, x2: plot.right, y2: 380, stroke: '#465563', 'stroke-width': 1.5 }));
+
+    // Color each chronological interval by the metric of the point it reaches; date headers split sessions.
+    const bySegment = new Map();
+    for (const point of visible) {
+      if (!bySegment.has(point.segment)) bySegment.set(point.segment, []);
+      bySegment.get(point.segment).push(point);
+    }
+    for (const segmentPoints of bySegment.values()) {
+      for (let index = 1; index < segmentPoints.length; index += 1) {
+        const previous = segmentPoints[index - 1];
+        const current = segmentPoints[index];
+        const d = `M ${x(previous.xTime).toFixed(2)} ${y(previous).toFixed(2)} L ${x(current.xTime).toFixed(2)} ${y(current).toFixed(2)}`;
+        chart.append(svg('path', { d, fill: 'none', stroke: COLORS[current.metric], 'stroke-width': 2.8, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', 'data-series': 'chronological', 'data-metric': current.metric }));
+      }
+    }
+
+    // Time labels use actual observed timestamps at a restrained interval.
+    const tickCandidates = visible.filter((point, index) => index === 0 || index === visible.length - 1 || point.xTime - visible[index - 1].xTime >= Math.max(1, visibleDuration / 12));
+    const seen = new Set();
+    for (const point of tickCandidates) {
+      if (seen.has(point.xTime)) continue;
+      seen.add(point.xTime);
+      const xx = x(point.xTime);
+      chart.append(svg('line', { x1: xx, y1: 380, x2: xx, y2: 385, stroke: '#465563', 'stroke-width': 1 }));
+      chart.append(svg('text', { x: xx, y: 407, 'text-anchor': 'end', fill: '#526272', 'font-size': 11, transform: `rotate(-42 ${xx} 407)` }, formatTime(point.xTime)));
+    }
+    chart.append(svg('text', { x: plot.left, y: 438, fill: '#68798b', 'font-size': 12 }, formatTime(viewStart)));
+    const duration = Math.max(0, Math.round(viewEnd - allStart));
+    chart.append(svg('text', { x: plot.right, y: 438, 'text-anchor': 'end', fill: '#68798b', 'font-size': 12 }, `Elapsed ${Math.floor(duration / 60)}h ${String(duration % 60).padStart(2, '0')}m · ${formatTime(viewEnd)}`));
+
+    for (const point of visible) {
+      const denominator = point.denominator ? `/${point.denominator}` : '%';
+      const title = `${LABELS[point.metric]} ${point.value}${point.metric === 'tofr' ? '%' : denominator} · ${point.deviceTime}`;
+      const mark = svg('circle', { cx: x(point.xTime).toFixed(2), cy: y(point).toFixed(2), r: 4.8, fill: COLORS[point.metric], stroke: '#fff', 'stroke-width': 1.4, 'data-metric': point.metric });
+      mark.append(svg('title', {}, title));
+      chart.append(mark);
+    }
+
+    const startLabel = document.querySelector('#chart-start-label');
+    const endLabel = document.querySelector('#chart-end-label');
+    if (startLabel) startLabel.textContent = formatTime(viewStart);
+    if (endLabel) endLabel.textContent = `Elapsed ${Math.max(0, Math.round(viewEnd - allStart))}m · ${formatTime(viewEnd)}`;
   }
 
-  window.renderSessionChart = render;
+  window.renderSessionChart = renderSessionChart;
 })();

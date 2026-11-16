@@ -2,9 +2,9 @@
 
 ## Status
 
-The user confirmed on 2026-10-29 that the application connects successfully to the actual instrument. The app already records locally, lists sessions, reviews raw messages, draws a provisional reference-style graph, and exports CSV. The supplied sample exercises the parser automatically with `npm test`. The next device validation is to capture a short real session, review the saved raw messages and parsed types, and export it. A successful port connection alone does not confirm message semantics, date/time meaning, or clinical graph mapping.
+The user confirmed on 2026-10-29 that the application connects successfully to the actual instrument. The app records locally, lists sessions, reviews raw messages, draws a provisional time-aligned graph with stacked native-value regions for TOFR, TOFC, and PTC, and exports CSV. Supabase Auth and an RLS-protected cloud schema now provide an optional sync path for recordings begun while signed in. The supplied sample exercises the parser automatically with `npm test`. A successful port connection alone does not confirm message semantics or date/time meaning.
 
-Keep the app local-only for this phase. Doctor accounts and shared/server storage require an authentication provider, backend ownership enforcement, and deployment/privacy requirements; a local profile selector would not provide secure per-doctor access control.
+Cloud records are owned by the authenticated Supabase user, enforced by database policies rather than UI filters. Keep local capture available when cloud services are unavailable. Before production use, apply and test the migration, validate live sync and RLS with two accounts, and define privacy, backup, retention, audit, and deployment requirements.
 
 ## Storage model for the current desktop application
 
@@ -18,8 +18,8 @@ Keep the app local-only for this phase. Doctor accounts and shared/server storag
 ## Work that can proceed now
 
 1. Add a recording review view that loads the original saved events and shows their raw and parsed values.
-2. Build the reference-style trend as a dynamic chart from stored events, keeping TOFR, TOFC, and PTC distinct and retaining the raw source values.
-3. Mark the chart's date and clinical interpretation provisional until the device protocol and chart mapping are confirmed. Never infer a patient result from the sample replay.
+2. Build the time-aligned graph as a dynamic chart from stored events. Share a horizontal device-time axis across three stacked regions, each with its native vertical value scale (TOFR %, TOFC count, PTC count). Connect successive points chronologically with line segments and markers colored by metric. Preserve raw values and denominators; break the line at explicit date/session headers.
+3. Mark the chart's date interpretation provisional until device time is confirmed. Do not combine the metrics into a clinical score or infer a patient result from the sample replay.
 4. Exercise browsing, replay, rendering, and export with the supplied sample.
 
 ## Instrument validation before relying on the chart
@@ -29,3 +29,5 @@ Confirm serial settings, newline framing, date order, whether device times are h
 ## Privacy and clinical scope
 
 The app is a local data-capture and review tool. The chart and parser are exploratory until verified against the actual device protocol and intended clinical specification. Add patient identifiers only when necessary, and define account, retention, audit, backup, and deployment requirements before production use with identifiable patient data.
+
+Imported multi-patient files are split into independently owned sessions after a review step. A repeated app-export `date_header` after measurements starts a new segment even when its date matches the prior segment; a same-date device marker immediately following a compact patient-demographics header stays attached to that patient. If another demographic header arrives before measurements, the newer header replaces the incomplete one. The app keeps imported patient files grouped under a date folder and plots only after the doctor chooses that patient's graph action.

@@ -4,12 +4,16 @@ Recorded: 2026-10-25.
 
 ## User requirement
 
-Build a professional application with a simple interface for the project's USB serial instrument. First establish reliable connection and recording; visualization comes later. The user explicitly requests that the eventual graph match the supplied reference. Treat this file and the stored image as requirements for that future phase, not as evidence that visualization has already been implemented.
+Build a professional application with a simple interface for the project's USB serial instrument. First establish reliable connection and recording; visualization comes later. The supplied image is the original visual reference; the user's current chart direction below supersedes its combined severity-axis layout.
 
 - Visual reference: [reference image](references/visualization-reference.png).
 - Original sample, copied without editing: [device sample](references/device-sample.csv).
 - The instrument currently appears as USB Serial Device (COM12); discover ports dynamically rather than assuming COM12.
 - Screenshot of the existing serial monitor showed 115200 baud. Other connection parameters require confirmation.
+
+## Current chart direction
+
+On 2026-10-31, the user clarified the current layout using two examples: a shared horizontal time axis, with three vertically stacked metric regions (TOFR at top, TOFC in the middle, PTC at the bottom), each with its own native vertical value scale. Plot each observation in its metric region, then connect successive observations in chronological order across metric-region boundaries. Color points and connecting intervals by metric (green TOFR, yellow TOFC, orange PTC). Keep source values and denominators (normally TOFC /4 and PTC /20). Break the connecting line at explicit date/session headers. This supersedes earlier shared clinical-severity bands and separate-horizontal-axis interpretations; do not transform counts into a clinical severity score.
 
 ## What the reference shows
 
@@ -60,13 +64,13 @@ The middle sequence is broadly consistent with a descending and ascending combin
 
 ## Implementation requirements for the later graph
 
-1. Use a piecewise vertical mapping for TOFR, TOFC, and PTC to reproduce the reference bands. Preserve native values separately from display coordinates. Exact band spacing, threshold inclusivity, and interpolation within each band remain to be specified; do not invent a clinically meaningful formula from image pixels.
+1. Use one shared horizontal device-time scale and three stacked plot regions with independent native vertical scales for TOFR (%), TOFC count, and PTC count. Keep source values and denominators unchanged. Do not invent a common clinical severity mapping.
 2. Preserve real sample timing. Establish whether timestamps mean hours/minutes or minutes/seconds before assigning durations. Do not space irregularly timed readings evenly.
 3. Retain raw input, reception timestamp with timezone/UTC representation, record sequence, source time text, parsed metric type, value, denominator, mode, and parse status. Treat mode markers and date headers as events, not numeric points.
 4. Do not silently drop malformed or unknown messages. Preserve them and flag parsing issues independently of serial capture.
 5. Show exact source values and timestamps when inspecting a point: for example TOFR 40%, TOFC 2/4, or PTC 9/20.
-6. Plot actual readings with visible markers and straight connecting segments where appropriate. Do not fabricate readings or smooth away transitions. Disconnections and identified session changes must produce visible gaps rather than implied continuous measurements.
-7. Match the reference's band ordering, threshold labels, colors, dashed guides, and time-navigation behavior. Make measurement type explicit even where color is used.
+6. Plot actual readings with visible markers and straight chronological connecting segments, including transitions between metric regions. Do not fabricate readings or smooth away transitions. Disconnections and identified session changes must produce visible gaps rather than implied continuous measurements.
+7. Label each metric region and its native scale. Use stable metric colors for point markers and connecting intervals. Keep labels clear of tick values and retain time navigation.
 8. Support both live incoming data and review of stored sessions through the same plotting model.
 9. Keep storage and serial acquisition independent of rendering; navigating or pausing the chart must not pause recording.
 10. Validate the parser and piecewise plot mapping against confirmed device protocol and known examples before treating the chart's depth labels as instrument interpretations.

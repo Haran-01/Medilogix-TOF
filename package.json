@@ -7,11 +7,14 @@
   "scripts": {
     "start": "electron .",
     "test": "node --test",
-    "package:win": "electron-builder --win nsis"
+    "db:migrate": "node scripts/apply-supabase-migration.js",
+    "package:win": "electron-builder --win nsis",
+    "build:mobile": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-mobile-viewer.ps1"
   },
   "devDependencies": {
     "electron": "45.1.0",
-    "electron-builder": "26.8.1"
+    "electron-builder": "^26.18.0",
+    "pg": "^8.23.1"
   },
   "build": {
     "appId": "com.medilogix.tof",
@@ -21,10 +24,11 @@
     },
     "files": [
       "src/**/*",
-      "docs/references/device-sample.csv",
+      ".env",
       "package.json"
     ],
     "win": {
+      "icon": "src/assets/medilogix-symbol.ico",
       "target": [
         {
           "target": "nsis",
@@ -40,5 +44,10 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     }
-  }
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "dotenv": "^16.6.1"
+  },
+  "author": "MedilogiX"
 }
