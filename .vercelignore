@@ -1,0 +1,7 @@
+node_modules/
+release/
+dist/
+.git/
+.vercel/
+.env*
+mobile-viewer/config.js
