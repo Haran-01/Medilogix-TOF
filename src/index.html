@@ -29,10 +29,13 @@
         </div>
 
         <section class="connect-panel panel">
-          <div class="panel-heading"><div><h2>Connect your instrument</h2><p>Connect the instrument to your computer with its USB cable.</p></div></div>
+          <div class="connection-brand-row">
+            <div class="panel-heading"><div><h2>Connect your instrument</h2><p>Connect the instrument to your computer with its USB cable.</p></div></div>
+            <img class="senstim-logo" src="assets/senstim-tof-logo.png" alt="SenStim TOF+ NMBA and PNS Monitor">
+          </div>
           <div class="connection-controls">
             <label class="field baud-field"><span>Connection speed</span><select id="baud-select"><option>9600</option><option>19200</option><option>38400</option><option>57600</option><option selected>115200</option></select><small>Choose the speed set on your instrument.</small></label>
-            <div class="connection-actions"><button class="button button-primary connect-button" id="connect-button"><span class="connect-icon">↔</span> Connect &amp; record</button></div>
+            <div class="connection-actions"><button class="button button-primary connect-button" id="connect-button"><span class="connect-icon">↔</span> Connect &amp; receive</button></div>
           </div>
           <div class="connection-footer"><span class="lock-icon">▣</span> Disconnect and save your readings before closing the app.</div>
         </section>

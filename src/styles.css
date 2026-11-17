@@ -135,6 +135,11 @@ footer{padding:0 25px}
 
 .nav-item,.button,.table-action{font-family:inherit}
 
+.connection-brand-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,300px) minmax(0,1fr);align-items:center;min-height:94px;gap:18px}
+.senstim-logo{display:block;grid-column:2;width:100%;max-height:96px;object-fit:contain;justify-self:center}
+.connection-controls{border-top:1px solid #edf0f4;padding-top:16px;margin-top:0}
+@media(max-width:780px){.connection-brand-row{grid-template-columns:1fr;gap:12px;padding:2px 0 14px}.connection-brand-row .panel-heading{justify-content:center;text-align:center}.senstim-logo{grid-column:1;width:min(300px,78vw);max-height:90px}.connection-controls{padding-top:14px}}
+
 .device-dialog{width:min(480px,calc(100% - 40px));max-width:480px;padding:0;border:1px solid #e0e7ee;border-radius:12px;background:#fff;color:#1d2b40;box-shadow:0 22px 80px #14263d38}
 .device-dialog::backdrop{background:#15263d66;backdrop-filter:blur(2px)}
 .dialog-top{display:flex;justify-content:space-between;align-items:center;padding:22px 24px 0}

@@ -1,6 +1,7 @@
 node_modules/
 release/
 dist/
+.vercel/
 mobile-viewer/config.js
 *.log
 .env

@@ -208,7 +208,7 @@ async function connect() {
     readTask = readStream(port);
   } catch (error) {
     if (error.name !== 'NotFoundError' && error.name !== 'AbortError') showNotice('Could not connect. Check the USB cable and connection speed, then try again.', 'error');
-    $('#connect-button').innerHTML = '<span class="connect-icon">↔</span> Connect &amp; record';
+    $('#connect-button').innerHTML = '<span class="connect-icon">↔</span> Connect &amp; receive';
     $('#connect-button').disabled = false;
   }
 }
@@ -736,7 +736,7 @@ window.medilogix.onSerialState(({ connected, session }) => {
   else liveCaptureReady = Boolean(session && session.status !== 'recording' && captureMessageCount > 0);
   setConnected(connected, session);
   if (!connected) {
-    $('#connect-button').innerHTML = '<span class="connect-icon">↔</span> Connect &amp; record';
+    $('#connect-button').innerHTML = '<span class="connect-icon">↔</span> Connect &amp; receive';
     if (session?.status === 'interrupted') showNotice('The instrument disconnected unexpectedly. Readings received so far are not saved yet.', 'error');
     void refreshSessions();
   }

@@ -9,7 +9,7 @@
     "test": "node --test",
     "db:migrate": "node scripts/apply-supabase-migration.js",
     "package:win": "electron-builder --win nsis",
-    "build:mobile": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-mobile-viewer.ps1"
+    "build:mobile": "node scripts/build-mobile-viewer.js"
   },
   "devDependencies": {
     "electron": "45.1.0",

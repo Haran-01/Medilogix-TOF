@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "installCommand": "npm install --omit=dev",
+  "buildCommand": "npm run build:mobile",
+  "outputDirectory": "release/mobile-viewer"
+}

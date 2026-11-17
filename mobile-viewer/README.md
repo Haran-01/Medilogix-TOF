@@ -6,11 +6,11 @@ This is a separate, browser-based viewer for phones and tablets. It is intention
 
 From the project root, run:
 
-```powershell
+```sh
 npm run build:mobile
 ```
 
-The static site is generated in `release/mobile-viewer`. The build reads only `SUPABASE_URL` and `SUPABASE_ANON_KEY` from the root `.env`; it never reads or packages a database password or service-role key. The anonymous key is a public client key. Every data request uses the signed-in user's access token and relies on the existing authenticated row-level security policies.
+The static site is generated in `release/mobile-viewer`. The build reads `SUPABASE_URL` and `SUPABASE_ANON_KEY` from the environment, falling back to the root `.env` for local builds. It never reads or packages a database password or service-role key. The anonymous key is a public client key. Every data request uses the signed-in user's access token and relies on the existing authenticated row-level security policies.
 
 ## Publish
 
