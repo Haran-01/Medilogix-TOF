@@ -32,7 +32,7 @@ if (!/^https:\/\//i.test(supabaseUrl)) {
 }
 
 fs.mkdirSync(outputDir, { recursive: true });
-for (const file of ['index.html', 'styles.css', 'app.js', 'manifest.webmanifest']) {
+for (const file of ['index.html', 'styles.css', 'app.js', 'manifest.webmanifest', 'email-confirmed.html']) {
   fs.copyFileSync(path.join(sourceDir, file), path.join(outputDir, file));
 }
 for (const file of ['medilogix-symbol.png', 'medilogix-logo.png']) {

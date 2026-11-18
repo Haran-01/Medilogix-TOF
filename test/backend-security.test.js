@@ -39,7 +39,7 @@ test('desktop backend uses only public Supabase configuration and encrypted auth
   assert.match(backend, /safeStorage\.decryptString/);
   assert.doesNotMatch(backend, /SUPABASE_SERVICE_ROLE_KEY|DATABASE_URL/);
   const keys = exampleEnv.split(/\r?\n/).filter((line) => line.includes('=')).map((line) => line.split('=')[0]).sort();
-  assert.deepEqual(keys, ['SUPABASE_ANON_KEY', 'SUPABASE_URL']);
+  assert.deepEqual(keys, ['SUPABASE_ANON_KEY', 'SUPABASE_EMAIL_REDIRECT_URL', 'SUPABASE_URL']);
   const configuredEnvPath = path.join(root, '.env');
   if (fs.existsSync(configuredEnvPath)) {
     const configuredKeys = fs.readFileSync(configuredEnvPath, 'utf8')
@@ -55,6 +55,21 @@ test('self-registration uses Supabase Auth and exposes only a narrow desktop IPC
   assert.match(backend, /supabase\.auth\.signUp\(\{[\s\S]*doctor_name: doctorName[\s\S]*phone_number: phoneNumber/);
   assert.match(backend, /supabase\.auth\.updateUser\(\{[\s\S]*doctor_name: name[\s\S]*phone_number: phone/);
   assert.match(backend, /confirmationRequired: !data\.session/);
+  assert.match(backend, /emailRedirectTo: getEmailConfirmationRedirectUrl\(\)/);
+  assert.match(backend, /medilogix-recordings\.vercel\.app\/email-confirmed\.html/);
   assert.match(main, /cloud:sign-up.*signUpWithPassword/);
   assert.match(preload, /signUp: \(credentials\) => ipcRenderer\.invoke\('cloud:sign-up', credentials\)/);
+});
+
+test('email confirmation points to a clear return-to-app page', () => {
+  const confirmation = fs.readFileSync(path.join(root, 'mobile-viewer', 'email-confirmed.html'), 'utf8');
+  const buildScript = fs.readFileSync(path.join(root, 'scripts', 'build-mobile-viewer.js'), 'utf8');
+  assert.match(confirmation, /Email confirmed/);
+  assert.match(confirmation, /return to the MedilogiX desktop app and sign in/i);
+  assert.match(confirmation, /history\.replaceState/);
+  assert.match(buildScript, /email-confirmed\.html/);
+  const renderer = fs.readFileSync(path.join(root, 'src', 'renderer.js'), 'utf8');
+  const desktopHtml = fs.readFileSync(path.join(root, 'src', 'index.html'), 'utf8');
+  assert.match(desktopHtml, /Return to sign in/);
+  assert.match(desktopHtml, /same email and password/);
 });

@@ -639,6 +639,7 @@ async function refreshCloudStatus(status = null) {
     ? status.email ? 'Your account and contact details.' : 'Sign in to back up your records to your account. You can record without signing in.'
     : 'Your account is temporarily unavailable. Please try again later.';
   $('#account-form').hidden = !status.configured || Boolean(status.email);
+  $('#signup-confirmation').hidden = true;
   $('#profile-form').hidden = !status.email;
   $('#account-mode-toggle').hidden = !status.configured || Boolean(status.email);
   $('#account-signout').hidden = !status.email;
@@ -658,6 +659,9 @@ $('#account-button').addEventListener('click', async () => {
 $('#close-account-dialog').addEventListener('click', () => $('#account-dialog').close());
 function setAccountMode(mode) {
   accountMode = mode;
+  $('#account-form').hidden = false;
+  $('#signup-confirmation').hidden = true;
+  $('#account-mode-toggle').hidden = false;
   const signingUp = mode === 'sign-up';
   $('#account-heading').textContent = signingUp ? 'Create an account' : 'Sign in to your account';
   $('#account-submit').textContent = signingUp ? 'Create account' : 'Sign in';
@@ -671,6 +675,7 @@ function setAccountMode(mode) {
   $('#account-state').classList.remove('error');
 }
 $('#account-mode-toggle').addEventListener('click', () => setAccountMode(accountMode === 'sign-in' ? 'sign-up' : 'sign-in'));
+$('#confirmation-signin').addEventListener('click', () => setAccountMode('sign-in'));
 $('#account-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   const submit = $('#account-submit');
@@ -687,7 +692,13 @@ $('#account-form').addEventListener('submit', async (event) => {
       const result = await window.medilogix.signUp(credentials);
       $('#account-password').value = '';
       if (result.confirmationRequired) {
-        state.textContent = `If this email can register, check its inbox for a confirmation link. Then return here to sign in.`;
+        accountMode = 'sign-in';
+        $('#account-heading').textContent = 'Check your email';
+        $('#account-form').hidden = true;
+        $('#signup-confirmation-email').textContent = credentials.email;
+        $('#signup-confirmation').hidden = false;
+        $('#account-mode-toggle').hidden = true;
+        state.textContent = '';
         return;
       }
       setAccountMode('sign-in');

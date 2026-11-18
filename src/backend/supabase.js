@@ -17,6 +17,17 @@ function loadSupabaseConfig(app) {
   return { configured: true, url: parsed.toString().replace(/\/$/, ''), key };
 }
 
+function getEmailConfirmationRedirectUrl() {
+  const configured = String(process.env.SUPABASE_EMAIL_REDIRECT_URL || '').trim();
+  const redirectUrl = configured || 'https://medilogix-recordings.vercel.app/email-confirmed.html';
+  let parsed;
+  try { parsed = new URL(redirectUrl); } catch { throw new Error('Email confirmation redirect URL is invalid.'); }
+  if (parsed.protocol !== 'https:' && parsed.hostname !== 'localhost' && parsed.hostname !== '127.0.0.1') {
+    throw new Error('Email confirmation redirect URL must use HTTPS.');
+  }
+  return parsed.toString();
+}
+
 function createAuthStorage(app, safeStorage) {
   const sessionFile = path.join(app.getPath('userData'), 'supabase-auth-session.enc');
   const storageKey = 'medilogix-supabase-auth';
@@ -163,7 +174,10 @@ function createSupabaseBackend({ app, safeStorage, onAuthChange = () => {} }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { doctor_name: doctorName, phone_number: phoneNumber } }
+        options: {
+          data: { doctor_name: doctorName, phone_number: phoneNumber },
+          emailRedirectTo: getEmailConfirmationRedirectUrl()
+        }
       });
       if (error) throw error;
       return {
